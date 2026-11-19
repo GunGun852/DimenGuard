@@ -1,0 +1,54 @@
+{
+  "compiler": "g++ (Debian 14.2.0-19) 14.2.0",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "flags": [
+    "-std=c++20",
+    "-O2",
+    "-S",
+    "-fno-ipa-icf"
+  ],
+  "comparison": "Exact normalized instruction text; runtime parameters; three functions only",
+  "results": [
+    {
+      "baseline": "raw_speed",
+      "typed": "typed_speed",
+      "identical": true,
+      "baseline_instructions": [
+        "divsd %xmm1, %xmm0",
+        "ret"
+      ],
+      "typed_instructions": [
+        "divsd %xmm1, %xmm0",
+        "ret"
+      ]
+    },
+    {
+      "baseline": "raw_force",
+      "typed": "typed_force",
+      "identical": true,
+      "baseline_instructions": [
+        "divsd %xmm2, %xmm1",
+        "mulsd %xmm1, %xmm0",
+        "ret"
+      ],
+      "typed_instructions": [
+        "divsd %xmm2, %xmm1",
+        "mulsd %xmm1, %xmm0",
+        "ret"
+      ]
+    },
+    {
+      "baseline": "raw_feet_to_metres",
+      "typed": "typed_feet_to_metres",
+      "identical": true,
+      "baseline_instructions": [
+        "mulsd .LC0(%rip), %xmm0",
+        "ret"
+      ],
+      "typed_instructions": [
+        "mulsd .LC0(%rip), %xmm0",
+        "ret"
+      ]
+    }
+  ]
+}

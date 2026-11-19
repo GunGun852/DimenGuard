@@ -1,0 +1,81 @@
+# Testing and validation record
+
+Validation date: 16 November 2026. Environment: Linux x86-64, GCC 14.2.0,
+CMake 4.4.5. Record applies to the delivered source, not every compiler/version.
+
+## Full suite
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release --parallel 2
+ctest --test-dir build -C Release --output-on-failure --parallel 2
+```
+
+Expected delivery result: **17/17 CTest tests pass**.
+
+| Test area | Evidence |
+|---|---|
+| Core | 10,043 runtime checks, plus compile-time assertions |
+| Numeric sampling | 2,000 deterministic inputs; five comparisons each against independent numerical formulas |
+| Type assertions | Deduced velocity/force/area, casts, concepts, conversions, comparisons, scalar rules, layout |
+| Compile rejection | 11 separate negative cases, each preceded by a valid compilation control |
+| CLI | 16 cases: conversions, incompatible dimensions, malformed/non-finite input, overflow, usage |
+| Applications | Demo, explanations, physics and custom-unit example |
+| Integration | Install library, `find_package` from a separate project, build and run consumer |
+| Direct build | Compiler-only script builds examples and runs core/negative tests |
+| Sanitizers | GCC AddressSanitizer + UndefinedBehaviorSanitizer core run passes |
+| Overhead | Three runtime-input typed functions match baseline instructions; see PERFORMANCE.md |
+
+## Negative cases
+
+| File in `tests/compile_fail/` | Rejected operation |
+|---|---|
+| `incompatible_add.cpp` | Length + time |
+| `mixed_scale_add.cpp` | Metres + feet without explicit conversion |
+| `wrong_cast.cpp` | Length converted into time |
+| `implicit_scalar.cpp` | Quantity implicitly converted to double |
+| `implicit_conversion.cpp` | Feet implicitly assigned to metres |
+| `scalar_add.cpp` | Bare scalar added to length |
+| `incompatible_compare.cpp` | Length compared with time |
+| `wrong_argument.cpp` | Mass passed to a duration parameter |
+| `invalid_power.cpp` | Power outside documented bounds |
+| `invalid_dimension.cpp` | Dimension exponent outside documented bounds |
+| `invalid_scale.cpp` | Zero unit scale |
+
+By default each source builds a valid expression. Defining
+`DIMENGUARD_NEGATIVE_CASE=1` activates its invalid expression. The harness first
+requires the valid control to build, then requires the invalid version to fail.
+A missing compiler/header cannot therefore produce a false success. Separate build
+directories allow cases to run in parallel. Logs are in
+`build/compile_cases/<case>/result-ON.log`.
+
+The explanation demo is not substituted for these actual compiler tests. Compiler
+diagnostic wording varies; tests assert acceptance/rejection, not a fragile exact
+message string.
+
+## Sanitizer reproduction (GCC/Clang on supported systems)
+
+```sh
+cmake -S . -B build-sanitized -DCMAKE_BUILD_TYPE=Debug -DDIMENGUARD_SANITIZERS=ON
+cmake --build build-sanitized --target dimenguard_tests
+./build-sanitized/dimenguard_tests
+```
+
+For this execution environment the equivalent direct GCC run used
+`ASAN_OPTIONS=detect_leaks=0`; LeakSanitizer was not evaluated. The core has no
+allocation; formatting/diagnostics use standard strings. This is not a proof of
+absence of all defects.
+
+## Platform status
+
+Linux GCC was executed here. Native macOS/Apple Clang and Windows/MSVC have not
+been executed here. The GitHub Actions matrix is supplied but has not run remotely.
+No badge or unexecuted platform is represented as passing. The team should run and
+record the actual compiler versions on their own computers before submission.
+
+## Boundaries of the tests
+
+Dimensional checking does not validate physical models or recover the correct unit
+of incorrectly labelled external data. Runtime double overflow/NaN semantics remain
+those of the numeric representation. There are no GUI, network or browser tests
+because this project exposes a C++ library and console application.
