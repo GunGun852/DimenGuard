@@ -58,18 +58,20 @@ function(check_interactive label mode input)
     if(NOT "${code}" STREQUAL "0")
         message(FATAL_ERROR "Interactive session ${label} exited ${code}: ${out}${err}")
     endif()
+    string(REPLACE "\r\n" "\n" out "${out}")
     foreach(expected IN LISTS ARGN)
         string(FIND "${out}${err}" "${expected}" found)
         if(found EQUAL -1)
             message(FATAL_ERROR "Interactive session ${label} missing '${expected}': ${out}${err}")
         endif()
     endforeach()
+    set(interactive_output "${out}" PARENT_SCOPE)
 endfunction()
 
 check_interactive(repeated "" "1\n72\nkm/h\nm/s\n1\n1\nft\nm\n1\n-2\nm\ncm\n0\n"
     "72 km/h = 20 m/s" "1 ft = 0.3048 m" "-2 m = -200 cm" "Goodbye!")
 check_interactive(menu_options "" "2\n3\n4\n0\n"
-    "m/s^2" "4 N" "DIMENSION LAB" "Goodbye!")
+    "s (second)" "yd (yard)" "mi (mile)" "m/s^2" "4 N" "DIMENSION LAB" "Goodbye!")
 check_interactive(invalid_values "" "1\nabc\n1\n1abc\n1\nnan\n1\ninf\n1\n1e999\n1\n2\nm\ncm\n0\n"
     "VALUE must be a finite number" "VALUE is outside the supported number range" "2 m = 200 cm" "Goodbye!")
 check_interactive(invalid_units "" "1\n1\nm\ns\n1\n1\nbananas\nm\n1\n1\nm\nbananas\n1\n1\nM\nm\n1\n500\ng\nkg\n0\n"
@@ -79,7 +81,7 @@ check_interactive(overflow "" "1\n1e308\nkm\ncm\n1\n1\nm\ncm\n0\n"
 check_interactive(whitespace "" " 1 \r\n 1e3 \r\n ms \r\n s \r\n 0 \r\n"
     "1000 ms = 1 s" "Goodbye!")
 check_interactive(bad_choices "" "\n9\n1abc\n1\n\n0\n"
-    "Please choose 0, 1, 2, 3 or 4." "VALUE must be a finite number" "Goodbye!")
+    "Please choose 0, 1, 2, 3, 4, 5 or 6." "VALUE must be a finite number" "Goodbye!")
 check_interactive(eof_menu "" "" "Choose an option:" "Goodbye!")
 check_interactive(eof_value "" "1\n" "Enter value:" "Goodbye!")
 check_interactive(eof_from "" "1\n7\n" "From unit" "Goodbye!")
@@ -90,4 +92,5 @@ check_interactive(yard_mile "" "2\n1\n1\nyd\nm\n1\n1\nmi\nyd\n1\n1760\nyd\nmi\n0
 check_interactive(yard_mile_errors "" "1\n1\nyd\ns\n1\n1\nmi\nkg\n1\n1\nmi\nkm\n0\n"
     "Incompatible dimensions: cannot convert yd to s" "Incompatible dimensions: cannot convert mi to kg"
     "1 mi = 1.609344 km" "Goodbye!")
-message(STATUS "37 CLI cases and 14 interactive sessions passed")
+include("${CMAKE_CURRENT_LIST_DIR}/HistoryTests.cmake")
+message(STATUS "37 CLI cases and 22 interactive sessions passed (including 8 history sessions)")

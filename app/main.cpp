@@ -1,9 +1,12 @@
 #include <dimenguard/dimenguard.hpp>
+#include "conversion_history.hpp"
+#include "unit_names.hpp"
 
 #include <array>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -56,7 +59,7 @@ double parse_value(const std::string& input) {
     return value;
 }
 
-void convert_and_print(double value, std::string_view from_symbol, std::string_view to_symbol) {
+std::string convert_and_print(double value, std::string_view from_symbol, std::string_view to_symbol) {
     const auto source = lookup(from_symbol, value);
     const auto target = lookup(to_symbol, 0.0);
     const double converted = std::visit([](auto from, auto to) -> double {
@@ -67,11 +70,19 @@ void convert_and_print(double value, std::string_view from_symbol, std::string_v
             dg::unit_symbol<From>() + " to " + dg::unit_symbol<To>());
     }, source, target);
     if (!std::isfinite(converted)) throw std::out_of_range("Conversion exceeds finite double range");
-    std::cout << value << ' ' << from_symbol << " = " << converted << ' ' << to_symbol << '\n';
+    std::ostringstream formatted;
+    formatted << std::setprecision(12) << value << ' ' << from_symbol
+              << " = " << converted << ' ' << to_symbol;
+    std::string result = formatted.str();
+    std::cout << result << '\n';
+    return result;
 }
 
 void list_units() {
-    for (const auto& entry : registry) std::cout << entry.symbol << '\n';
+    for (const auto& entry : registry) {
+        dg::cli::print_unit_label(std::cout, entry.symbol);
+        std::cout << '\n';
+    }
 }
 
 void show_diagnostic(std::string_view expression, const dg::diagnostic& d) {
@@ -135,6 +146,7 @@ bool read_answer(std::string_view prompt, std::string& answer) {
 }
 
 void interactive_menu() {
+    dg::cli::conversion_history history;
     std::cout << "\nWelcome to DimenGuard!\n"
               << "Enter each answer, then press Enter. Unit symbols are case-sensitive.\n";
     while (true) {
@@ -142,6 +154,8 @@ void interactive_menu() {
                   << "2. List supported units\n"
                   << "3. Show physics demo\n"
                   << "4. Explain dimensions\n"
+                  << "5. Show recent conversions (last 10)\n"
+                  << "6. Clear conversion history\n"
                   << "0. Exit\n\n";
         std::string choice;
         if (!read_answer("Choose an option: ", choice)) return;
@@ -149,8 +163,14 @@ void interactive_menu() {
         if (choice == "2") { list_units(); continue; }
         if (choice == "3") { demo(); continue; }
         if (choice == "4") { explanation_demo(); continue; }
+        if (choice == "5") { history.print(std::cout); continue; }
+        if (choice == "6") {
+            history.clear();
+            std::cout << "Conversion history cleared.\n";
+            continue;
+        }
         if (choice != "1") {
-            std::cout << "Please choose 0, 1, 2, 3 or 4.\n";
+            std::cout << "Please choose 0, 1, 2, 3, 4, 5 or 6.\n";
             continue;
         }
         try {
@@ -159,7 +179,7 @@ void interactive_menu() {
             const double value = parse_value(value_text);
             if (!read_answer("From unit (e.g. m, ft, yd, mi, kg, km/h): ", from_symbol)) return;
             if (!read_answer("To unit: ", to_symbol)) return;
-            convert_and_print(value, from_symbol, to_symbol);
+            history.record(convert_and_print(value, from_symbol, to_symbol));
         } catch (const std::exception& error) {
             std::cout << "Error: " << error.what() << "\nPlease try again.\n";
         }
@@ -178,6 +198,7 @@ void help() {
               << "  dimenguard --version\n"
               << "Examples: convert 1 ft m | convert 72 km/h m/s | convert 500 g kg\n"
               << "Yards and miles: convert 1 yd m | convert 1 mi km | convert 1 mi yd\n"
+              << "Menu: 5 shows the last 10 successful conversions; 6 clears them. History lasts for this session only.\n"
               << "The CLI checks user-entered unit names at runtime; the C++ API checks types at compile time.\n";
 }
 }

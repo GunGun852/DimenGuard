@@ -31,6 +31,8 @@ auto distance = 1.0_m + dimenguard::unit_cast<dimenguard::metre>(1.0_ft);
 - C++20 concepts, constrained arithmetic, explicit conversion, and integral powers.
 - A separate educational API explaining accepted and rejected operations.
 - An interactive console converter, typed physics demo and custom-unit extension example.
+- Unit symbols with full names, plus the last 10 successful conversions in the current
+  interactive session and an option to clear them.
 - Eleven real compile-fail cases with valid compilation controls, numerical tests,
   CLI integration checks, and reproducible assembly comparisons.
 - Installable CMake interface target, compiler-only build option, and CI configuration.
@@ -41,6 +43,18 @@ Python is optional and used only by the GCC assembly-comparison helper.
 ## Quick start
 
 Requirements: a C++20-capable compiler; CMake 3.20+ for the standard workflow.
+
+For everyday use in Codespaces or macOS/Linux, launch with:
+
+```sh
+bash run.sh
+```
+
+The launcher builds the current source and opens the menu. With CMake, unchanged
+source is not recompiled. There is no patch to apply at startup. The compiler-only
+fallback builds the app directly when CMake is unavailable.
+
+To build and run the full test suite:
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -64,9 +78,17 @@ To unit: m/s
 72 km/h = 20 m/s
 ```
 
-The menu returns after each conversion. Choose `2` for supported units, `3` for
-the physics demo, `4` for dimension explanations, or `0` to exit. Invalid input
-shows an error and returns to the menu. Unit symbols are case-sensitive.
+The menu returns after each conversion. Choose `2` for supported units and full
+names (for example, `s (second)`), `3` for the physics demo, `4` for dimension
+explanations, `5` for recent conversions, `6` to clear the history, or `0` to exit.
+Invalid input shows an error and returns to the menu. Unit symbols are case-sensitive.
+
+History contains at most 10 successful conversions, displayed oldest first.
+The next success removes the oldest entry when the history is full. Failed
+conversions never enter the history or remove previous successes; identical
+successful conversions count as separate entries. Viewing lists or demos does not
+add records. History is held in memory for one interactive session and disappears
+on exit. Each command-line invocation is a separate process and has no shared history.
 
 Compile after changing source code, then run the executable whenever needed.
 Changing input values does not require recompilation. On macOS/Linux,
@@ -106,7 +128,8 @@ bash tools/build_direct.sh
 This compiler-only script runs the core tests and all eleven compile-fail controls.
 The full CLI suite and installable package workflow use CMake. `bash build.sh`
 chooses CMake when available and otherwise uses this fallback. `bash start.command`
-builds, tests and displays the demo; it can also be opened from Terminal on macOS.
+uses the simple launcher to build the app and open its menu. The launchers do not
+run the full test suite; use `bash build.sh` when validating changes.
 
 The interactive app reads answers with `std::getline(std::cin, ...)` and checks
 unit names at runtime. The library's typed C++ expressions are still checked at
@@ -154,11 +177,12 @@ target_link_libraries(my_program PRIVATE DimenGuard::dimenguard)
 
 ## Verified status
 
-The yard/mile update was built and tested on 21 November 2026 on Linux with GCC 14.2.0:
+The session-history update was built and tested on 21 November 2026 on Linux with GCC 14.2.0:
 
 - 17 CTest tests passed, including eleven negative compilation cases.
 - 10,091 runtime core checks passed, plus compile-time assertions.
-- 37 CLI scenarios and 14 interactive sessions passed inside the CLI integration test.
+- 37 CLI scenarios and 22 interactive sessions passed inside the CLI integration test,
+  including 8 history sessions covering capacity, failures, clearing and session reset.
 
 Earlier validation of the original implementation also recorded:
 

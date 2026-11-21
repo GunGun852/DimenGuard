@@ -15,6 +15,13 @@ and two interactive sessions. The total remains 17 CTest entries because these
 scenarios run inside the existing `core` and `cli_cases` entries.
 See [YARD_MILE_UPDATE.md](../YARD_MILE_UPDATE.md) for this update's validation record.
 
+Session-history update: 21 November 2026, Linux x86-64, GCC 14.2.0,
+CMake 4.4.5. All 17 CTest entries passed. Eight new interactive sessions raise
+the interactive total to 22; the command-line total remains 37. The tests compare
+complete history sections separately from earlier terminal output, so a discarded
+record cannot accidentally pass a test merely because it was printed earlier.
+See [HISTORY_UPDATE.md](../HISTORY_UPDATE.md) for the new menu options and manual checks.
+
 ## Full suite
 
 ```sh
@@ -32,7 +39,8 @@ Expected delivery result: **17/17 CTest tests pass**.
 | Type assertions | Deduced velocity/force/area, casts, concepts, conversions, comparisons, scalar rules, layout |
 | Compile rejection | 11 separate negative cases, each preceded by a valid compilation control |
 | CLI | 37 cases: conversions (including yards/miles in both directions), incompatible dimensions, malformed/non-finite input, overflow, usage |
-| Interactive console | 14 sessions: repeated conversions, menu options, recovery from bad input, whitespace, overflow, EOF at every prompt, explicit interactive mode and yards/miles |
+| Interactive console | 22 sessions: the original 14 plus 8 history sessions; option 2 also checks full names for seconds, yards and miles |
+| Session history | Empty list, varied successful results, exact 10-entry capacity, two evictions, failed inputs, failures at capacity, clear/reuse/repeated clear, duplicate successes, read-only viewing, fresh process and non-conversion actions |
 | Applications | Demo, explanations, physics and custom-unit example |
 | Integration | Install library, `find_package` from a separate project, build and run consumer |
 | Direct build | Compiler-only script builds examples and runs core/negative tests |
