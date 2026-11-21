@@ -1,4 +1,4 @@
-# DimenGuard：Start from here
+# DimenGuard：由呢度開始
 
 呢個專案係 **C++20 編譯期單位及維度檢查函式庫**。
 目標係畀數值帶有單位型別，等編譯器喺程式執行之前發現指定類型嘅錯誤。
@@ -6,14 +6,51 @@
 
 主體係 library，同時附有可以直接執行嘅示範程式。
 
-## 1. Mac 最快開始方法
+## 1. 先編譯，再開互動選單
 
 解壓縮 ZIP，用 VS Code 開啟 `DimenGuard` 資料夾，再開 Terminal。
 先確認 Terminal 位於包含 `README.md` 同 `CMakeLists.txt` 嗰層。
+如果已經用 Codespaces，直接用畫面下方嘅 Terminal 即可。
+
+第一次，或者改過 C++ 原始碼之後，執行：
+
+```sh
+bash build.sh
+```
+
+編譯及測試成功後，開啟程式：
+
+```sh
+./build/dimenguard
+```
+
+如果電腦冇 CMake，build script 會改用直接編譯；最後會提示你執行
+`./build-direct/dimenguard`。之後只需要再次執行程式，改輸入數字唔使重新編譯。
+
+選 `1` 轉換單位，每輸入一項就按 Enter：
+
+```text
+Choose an option: 1
+Enter value: 72
+From unit (e.g. m, ft, kg, km/h): km/h
+To unit: m/s
+72 km/h = 20 m/s
+```
+
+完成後會自動返回選單，可以繼續轉換。其他選項：
+
+- `2`：列出支援單位，符號大小寫有分別，例如 `m` 同 `N`。
+- `3`：顯示物理計算示範。
+- `4`：解釋維度推導。
+- `0`：離開程式。
+
+輸入錯誤數字或不相容單位，例如由米轉成秒，程式會提示錯誤並返回選單。
+
+Mac 如果只想用 compiler，亦可以執行：
 
 ```sh
 bash tools/build_direct.sh
-./build-direct/dimenguard demo
+./build-direct/dimenguard
 ```
 
 呢個方法只需要 C++20 compiler。假如未裝 Apple 開發工具，可先執行：
@@ -25,7 +62,7 @@ xcode-select --install
 完成安裝後再執行 build 指令。舊版本 compiler 若唔支援 C++20，需更新開發工具。
 呢份程式喺 Linux/GCC 已驗證；Mac 本機運行仍要由你哋實際測試。
 
-正常會見到：
+選單揀 `3` 會見到物理示範，例如：
 
 ```text
 100 m / 10 s         = 10 m/s
@@ -59,6 +96,9 @@ xcode-select --install
 
 ## 3. 單位轉換
 
+選單揀 `1` 就可以用提示輸入。以下指令方式亦繼續支援；
+如用 CMake 編譯，將路徑中嘅 `build-direct` 改成 `build`：
+
 ```sh
 ./build-direct/dimenguard convert 1 ft m
 ./build-direct/dimenguard convert 500 g kg
@@ -72,7 +112,8 @@ xcode-select --install
 auto length = 1_m + dimenguard::unit_cast<dimenguard::metre>(1_ft);
 ```
 
-CLI 嘅單位名稱係用戶執行時輸入，所以錯誤名稱喺執行時檢查；
+選單使用 `std::getline(std::cin, ...)` 讀取輸入。
+單位名稱係用戶執行時輸入，所以錯誤名稱喺執行時檢查；
 C++ 原始碼嘅單位型別及公式則喺編譯期檢查。兩者要分清楚。
 
 ## 4. 用 CMake 跑完整測試
@@ -125,3 +166,14 @@ Windows MSVC 可以直接用 CTest 跑同一個測試，唔需要照搬 compiler
 
 `quantity<metre>` 個物件只儲存一個 `double`。維度同單位係編譯器型別資料，
 唔係每個物件額外攜帶嘅字串。輸出格式同解釋文字係另外嘅功能，會有執行時成本。
+
+## 7. 交功課前
+
+- 五人各自理解、驗證及改進負責模組，留下真實 commits。
+- 建立 public Git repository，填上真實組員 Git 帳號。
+- 依照 [示範稿](docs/DEMO_SCRIPT.md) 練習一分鐘展示。
+- [創新比較](docs/RELATED_WORK.md) 清楚承認現有 library 已有單位安全功能。
+- [提交表](docs/SUBMISSION.md) 仍有需要你哋填寫嘅連結及分工資料。
+
+AI 已協助產生初版實作及測試；呢份 ZIP 唔代表已經有公開 repo、五人共同開發歷史，
+或者老師已確認創新分。實際參與及最終理解應由團隊補足。

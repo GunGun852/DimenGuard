@@ -22,6 +22,7 @@ foreach(negative IN ITEMS OFF ON)
     if(NOT configured EQUAL 0)
         message(FATAL_ERROR "Cannot configure ${CASE_NAME}: ${configure_out}${configure_err}")
     endif()
+    # Always recompile after switching the macro; timestamps may share one clock tick.
     execute_process(COMMAND "${CMAKE_COMMAND}" --build "${case_build}" --config "${CONFIG}" --clean-first
         RESULT_VARIABLE built OUTPUT_VARIABLE build_out ERROR_VARIABLE build_err)
     file(WRITE "${case_build}/result-${negative}.log" "${build_out}${build_err}")

@@ -30,7 +30,7 @@ auto distance = 1.0_m + dimenguard::unit_cast<dimenguard::metre>(1.0_ft);
 - Automatically derived area, volume, velocity, acceleration and force.
 - C++20 concepts, constrained arithmetic, explicit conversion, and integral powers.
 - A separate educational API explaining accepted and rejected operations.
-- A console demo, typed physics example and custom-unit extension example.
+- An interactive console converter, typed physics demo and custom-unit extension example.
 - Eleven real compile-fail cases with valid compilation controls, numerical tests,
   CLI integration checks, and reproducible assembly comparisons.
 - Installable CMake interface target, compiler-only build option, and CI configuration.
@@ -51,6 +51,30 @@ ctest --test-dir build -C Release --output-on-failure --parallel 2
 On macOS/Linux:
 
 ```sh
+./build/dimenguard
+```
+
+This opens an interactive menu. Choose `1`, then answer the prompts:
+
+```text
+Choose an option: 1
+Enter value: 72
+From unit (e.g. m, ft, kg, km/h): km/h
+To unit: m/s
+72 km/h = 20 m/s
+```
+
+The menu returns after each conversion. Choose `2` for supported units, `3` for
+the physics demo, `4` for dimension explanations, or `0` to exit. Invalid input
+shows an error and returns to the menu. Unit symbols are case-sensitive.
+
+Compile after changing source code, then run the executable whenever needed.
+Changing input values does not require recompilation. On macOS/Linux,
+`bash build.sh` is a shortcut for configuring, building and testing.
+
+The existing command-line options remain available:
+
+```sh
 ./build/dimenguard demo
 ./build/dimenguard explain
 ./build/dimenguard convert 72 km/h m/s
@@ -60,6 +84,7 @@ On macOS/Linux:
 On Windows with the Visual Studio generator, use Developer PowerShell and:
 
 ```powershell
+.\build\Release\dimenguard.exe
 .\build\Release\dimenguard.exe demo
 .\build\Release\dimenguard.exe explain
 .\build\Release\dimenguard.exe convert 72 km/h m/s
@@ -72,13 +97,17 @@ For Ninja or other single-configuration generators, executables are directly in
 
 ```sh
 bash tools/build_direct.sh
-./build-direct/dimenguard demo
+./build-direct/dimenguard
 ```
 
 This compiler-only script runs the core tests and all eleven compile-fail controls.
 The full CLI suite and installable package workflow use CMake. `bash build.sh`
 chooses CMake when available and otherwise uses this fallback. `bash start.command`
 builds, tests and displays the demo; it can also be opened from Terminal on macOS.
+
+The interactive app reads answers with `std::getline(std::cin, ...)` and checks
+unit names at runtime. The library's typed C++ expressions are still checked at
+compile time; an interactive conversion is a separate demonstration of that API.
 
 ## Core design and conversion policy
 
@@ -126,7 +155,7 @@ The delivered source was built and tested on Linux with GCC 14.2.0:
 
 - 17 CTest tests passed, including eleven negative compilation cases.
 - 10,043 runtime core checks passed, plus compile-time assertions.
-- 16 CLI scenarios passed inside the CLI integration test.
+- 16 CLI scenarios and 12 interactive sessions passed inside the CLI integration test.
 - ASan/UBSan core run passed with leak detection disabled in this environment.
 - Installed-package consumption and the compiler-only workflow passed.
 - Three optimized typed functions matched their equivalent raw-double instruction
