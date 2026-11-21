@@ -2,7 +2,7 @@
 #include <iostream>
 
 namespace dg = dimenguard;
-// Extend the library without editing its headers. One inch is 0.0254 metres.
+
 using inch = dg::unit<dg::length, std::ratio<127, 5000>>;
 using inch_per_second = dg::unit_quotient<inch, dg::second>;
 
