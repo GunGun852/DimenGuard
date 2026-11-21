@@ -167,13 +167,4 @@ Windows MSVC 可以直接用 CTest 跑同一個測試，唔需要照搬 compiler
 `quantity<metre>` 個物件只儲存一個 `double`。維度同單位係編譯器型別資料，
 唔係每個物件額外攜帶嘅字串。輸出格式同解釋文字係另外嘅功能，會有執行時成本。
 
-## 7. 交功課前
-
-- 五人各自理解、驗證及改進負責模組，留下真實 commits。
-- 建立 public Git repository，填上真實組員 Git 帳號。
-- 依照 [示範稿](docs/DEMO_SCRIPT.md) 練習一分鐘展示。
-- [創新比較](docs/RELATED_WORK.md) 清楚承認現有 library 已有單位安全功能。
-- [提交表](docs/SUBMISSION.md) 仍有需要你哋填寫嘅連結及分工資料。
-
-AI 已協助產生初版實作及測試；呢份 ZIP 唔代表已經有公開 repo、五人共同開發歷史，
-或者老師已確認創新分。實際參與及最終理解應由團隊補足。
+\
