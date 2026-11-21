@@ -10,8 +10,13 @@ int main() {
     constexpr dg::quantity<inch> ruler{12.0};
     constexpr auto feet = dg::unit_cast<dg::foot>(ruler);
     static_assert(feet.value() == 1.0);
-    std::cout << "12 inches = " << feet << '\n';
-    const auto speed = ruler / dg::quantity<dg::second>{2.0};
-    std::cout << "12 inches / 2 seconds = "
-              << dg::unit_cast<dg::metres_per_second>(speed) << '\n';
+
+    constexpr dg::quantity<dg::second> duration{2.0};
+    constexpr inch_per_second speed = ruler / duration;
+    constexpr auto speed_mps = dg::unit_cast<dg::metres_per_second>(speed);
+
+    std::cout << "12 inches = " << feet << '\n'
+              << "12 inches / 2 seconds = " << speed_mps << '\n';
+
+    return 0;
 }
