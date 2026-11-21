@@ -62,6 +62,14 @@ double parse_value(const std::string& input) {
 std::string convert_and_print(double value, std::string_view from_symbol, std::string_view to_symbol) {
     const auto source = lookup(from_symbol, value);
     const auto target = lookup(to_symbol, 0.0);
+    
+    const bool is_length = (from_symbol == "m" || from_symbol == "cm" || from_symbol == "km" ||
+                            from_symbol == "ft" || from_symbol == "yd" || from_symbol == "mi");
+    const bool is_mass   = (from_symbol == "kg" || from_symbol == "g");
+
+    if ((is_length || is_mass) && value < 0.0) {
+        throw std::invalid_argument("Length and mass cannot be negative.");
+    }
     const double converted = std::visit([](auto from, auto to) -> double {
         using From = typename decltype(from)::unit_type;
         using To = typename decltype(to)::unit_type;
