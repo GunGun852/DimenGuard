@@ -25,6 +25,8 @@ similarly named members. Extend through `unit<...>` aliases, as in the custom-un
 | `centimetre` | Length | 1/100 | `_cm` |
 | `kilometre` | Length | 1000 | `_km` |
 | `foot` | Length | 381/1250 | `_ft` |
+| `yard` | Length | 1143/1250 | `_yd` |
+| `mile` | Length | 201168/125 | `_mi` |
 | `kilogram` | Mass | 1 | `_kg` |
 | `gram` | Mass | 1/1000 | `_g` |
 | `second` | Time | 1 | `_s` |
@@ -41,6 +43,21 @@ has the same unit type as `quantity<kilometres_per_hour>`.
 Integer and floating literals both store a `double`. Integer literals above its
 exact integer range may round. A type-level exact rational scale does not make
 floating-point computations exact.
+
+`yard` and `mile` use international definitions: 1 yd = 0.9144 m and
+1 mi = 1609.344 m = 1760 yd = 5280 ft. See the
+[NIST conversion factors](https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors).
+The console accepts the case-sensitive symbols `yd` and `mi`.
+
+```cpp
+using namespace dimenguard::literals;
+auto distance = dimenguard::unit_cast<dimenguard::metre>(1_mi); // 1609.344 m
+auto length = 1_yd + dimenguard::unit_cast<dimenguard::yard>(3_ft); // 2 yd
+auto speed = dimenguard::unit_cast<dimenguard::metres_per_second>(60_mi / 1_h);
+// speed is approximately 26.8224 m/s
+// auto invalid = 1_yd + 1_m; // Explicit conversion required
+// auto wrong = 1_mi + 1_s;   // Different dimensions: rejected
+```
 
 ## Numeric operations
 

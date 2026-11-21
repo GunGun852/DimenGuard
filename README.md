@@ -26,7 +26,7 @@ auto distance = 1.0_m + dimenguard::unit_cast<dimenguard::metre>(1.0_ft);
 ## What is included?
 
 - Three base dimensions: length, mass, time; integer exponents are template arguments.
-- SI units and selected scaled/non-SI units, including centimetres, feet and hours.
+- SI units and selected scaled/non-SI units, including centimetres, feet, yards, miles and hours.
 - Automatically derived area, volume, velocity, acceleration and force.
 - C++20 concepts, constrained arithmetic, explicit conversion, and integral powers.
 - A separate educational API explaining accepted and rejected operations.
@@ -59,7 +59,7 @@ This opens an interactive menu. Choose `1`, then answer the prompts:
 ```text
 Choose an option: 1
 Enter value: 72
-From unit (e.g. m, ft, kg, km/h): km/h
+From unit (e.g. m, ft, yd, mi, kg, km/h): km/h
 To unit: m/s
 72 km/h = 20 m/s
 ```
@@ -78,6 +78,9 @@ The existing command-line options remain available:
 ./build/dimenguard demo
 ./build/dimenguard explain
 ./build/dimenguard convert 72 km/h m/s
+./build/dimenguard convert 1 yd m
+./build/dimenguard convert 1 mi km
+./build/dimenguard convert 1 mi yd
 ./build/physics_example
 ```
 
@@ -151,11 +154,14 @@ target_link_libraries(my_program PRIVATE DimenGuard::dimenguard)
 
 ## Verified status
 
-The delivered source was built and tested on Linux with GCC 14.2.0:
+The yard/mile update was built and tested on 21 November 2026 on Linux with GCC 14.2.0:
 
 - 17 CTest tests passed, including eleven negative compilation cases.
-- 10,043 runtime core checks passed, plus compile-time assertions.
-- 16 CLI scenarios and 12 interactive sessions passed inside the CLI integration test.
+- 10,091 runtime core checks passed, plus compile-time assertions.
+- 37 CLI scenarios and 14 interactive sessions passed inside the CLI integration test.
+
+Earlier validation of the original implementation also recorded:
+
 - ASan/UBSan core run passed with leak detection disabled in this environment.
 - Installed-package consumption and the compiler-only workflow passed.
 - Three optimized typed functions matched their equivalent raw-double instruction

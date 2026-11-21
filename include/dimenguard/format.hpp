@@ -19,6 +19,8 @@ template<Unit U>
     else if constexpr (SameUnit<U, centimetre>) return "cm";
     else if constexpr (SameUnit<U, kilometre>) return "km";
     else if constexpr (SameUnit<U, foot>) return "ft";
+    else if constexpr (SameUnit<U, yard>) return "yd";
+    else if constexpr (SameUnit<U, mile>) return "mi";
     else if constexpr (SameUnit<U, kilogram>) return "kg";
     else if constexpr (SameUnit<U, gram>) return "g";
     else if constexpr (SameUnit<U, second>) return "s";
