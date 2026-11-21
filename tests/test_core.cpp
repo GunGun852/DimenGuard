@@ -20,6 +20,8 @@ template<class Q, int N> concept Powerable = requires(Q q) { dg::pow<N>(q); };
 using M = dg::quantity<dg::metre>;
 using S = dg::quantity<dg::second>;
 using CM = dg::quantity<dg::centimetre>;
+using YD = dg::quantity<dg::yard>;
+using MI = dg::quantity<dg::mile>;
 using EquivalentMetre = dg::unit<dg::length, std::ratio<100, 100>>;
 
 static_assert(dg::Dimension<dg::length> && !dg::Dimension<int>);
@@ -48,6 +50,25 @@ static_assert(dg::pow<-1>(2.0_s).value() == 0.5);
 static_assert(dg::analyze<dg::operation::add, dg::metre, dg::second>() == dg::verdict::dimension_mismatch);
 static_assert(dg::analyze<dg::operation::add, dg::metre, dg::foot>() == dg::verdict::explicit_conversion_required);
 static_assert(dg::analyze<dg::operation::multiply, dg::metre, dg::second>() == dg::verdict::valid);
+
+// New units must retain their own type and the existing explicit-conversion policy.
+static_assert(std::same_as<decltype(1_yd), YD> && std::same_as<decltype(1.5_yd), YD>);
+static_assert(std::same_as<decltype(1_mi), MI> && std::same_as<decltype(1.5_mi), MI>);
+static_assert(dg::SameDimension<dg::yard, dg::metre> && dg::SameDimension<dg::mile, dg::metre>);
+static_assert(sizeof(YD) == sizeof(double) && sizeof(MI) == sizeof(double));
+static_assert(dg::unit_cast<dg::foot>(1_yd).value() == 3.0);
+static_assert(dg::unit_cast<dg::yard>(1_mi).value() == 1760.0);
+static_assert(dg::unit_cast<dg::foot>(1_mi).value() == 5280.0);
+static_assert(Addable<YD, YD> && Addable<MI, MI>);
+static_assert(!Addable<YD, M> && !Addable<MI, M> && !Addable<YD, MI>);
+static_assert(!Addable<YD, S> && !Addable<MI, S>);
+static_assert(!Comparable<YD, MI> && !Comparable<MI, M>);
+static_assert(!std::is_convertible_v<YD, M> && !std::is_convertible_v<MI, M>);
+static_assert(Castable<dg::metre, YD> && Castable<dg::yard, MI>);
+static_assert(!Castable<dg::second, YD> && !Castable<dg::kilogram, MI>);
+static_assert(std::same_as<typename decltype(1_mi / 1_h)::dimension_type, dg::velocity>);
+static_assert(dg::analyze<dg::operation::add, dg::yard, dg::metre>() == dg::verdict::explicit_conversion_required);
+static_assert(dg::analyze<dg::operation::add, dg::mile, dg::second>() == dg::verdict::dimension_mismatch);
 
 namespace {
 int checks = 0;
@@ -98,6 +119,43 @@ int main() {
     CHECK(dg::unit_symbol<dg::unit_quotient<dg::foot, dg::second>>() == "[381/1250] m s^-1");
     std::ostringstream output; output << 3_m << ", " << 2_kg * (1_m / 1_s / 1_s);
     CHECK(output.str() == "3 m, 2 N");
+
+    // Independent expected lengths use the international yard/mile definitions.
+    CHECK(near(dg::unit_cast<dg::metre>(1_yd).value(), 0.9144));
+    CHECK(near(dg::unit_cast<dg::yard>(0.9144_m).value(), 1.0));
+    CHECK(near(dg::unit_cast<dg::centimetre>(1_yd).value(), 91.44));
+    CHECK(near(dg::unit_cast<dg::yard>(3_ft).value(), 1.0));
+    CHECK(near(dg::unit_cast<dg::metre>(1_mi).value(), 1609.344));
+    CHECK(near(dg::unit_cast<dg::mile>(1609.344_m).value(), 1.0));
+    CHECK(near(dg::unit_cast<dg::kilometre>(1_mi).value(), 1.609344));
+    CHECK(near(dg::unit_cast<dg::mile>(1_km).value(), 0.621371192237334));
+    CHECK(near(dg::unit_cast<dg::mile>(1760_yd).value(), 1.0));
+    CHECK(near(dg::unit_cast<dg::mile>(5280_ft).value(), 1.0));
+    CHECK(near(dg::unit_cast<dg::metre>(1.5_yd).value(), 1.3716));
+    CHECK(near(dg::unit_cast<dg::metre>(0.5_mi).value(), 804.672));
+    CHECK(near(dg::unit_cast<dg::metre>(-2_yd).value(), -1.8288));
+    CHECK(near(dg::unit_cast<dg::kilometre>(-2_mi).value(), -3.218688));
+    CHECK(dg::unit_cast<dg::metre>(0_yd).value() == 0.0);
+    CHECK(dg::unit_cast<dg::metre>(0_mi).value() == 0.0);
+    CHECK((2_yd + 3_yd).value() == 5.0);
+    CHECK((3_mi - 2_mi).value() == 1.0);
+    CHECK((1_yd + dg::unit_cast<dg::yard>(3_ft)).value() == 2.0);
+    CHECK(near(dg::unit_cast<dg::metres_per_second>(60_mi / 1_h).value(), 26.8224));
+    CHECK(near(dg::unit_cast<dg::square_metre>(1_yd * 1_yd).value(), 0.83612736));
+    CHECK(dg::unit_symbol<dg::yard>() == "yd");
+    CHECK(dg::unit_symbol<dg::mile>() == "mi");
+    std::ostringstream imperial_output; imperial_output << 2_yd << ", " << 0.5_mi;
+    CHECK(imperial_output.str() == "2 yd, 0.5 mi");
+
+    // Round trips across zero, negative, fractional, small and large inputs.
+    for (double value : {0.0, -7.25, 0.125, 1.0, 1e-6, 1e6}) {
+        const auto yard_metres = dg::unit_cast<dg::metre>(YD{value});
+        const auto mile_metres = dg::unit_cast<dg::metre>(MI{value});
+        CHECK(near(yard_metres.value(), value * 0.9144));
+        CHECK(near(mile_metres.value(), value * 1609.344));
+        CHECK(near(dg::unit_cast<dg::yard>(yard_metres).value(), value));
+        CHECK(near(dg::unit_cast<dg::mile>(mile_metres).value(), value));
+    }
 
     const auto mismatch = dg::explain<dg::operation::add, dg::metre, dg::second>();
     CHECK(!mismatch.accepted() && mismatch.result_dimension.empty());
