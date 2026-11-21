@@ -7,7 +7,13 @@ Interactive-menu update: 20 November 2026, Linux x86-64, GCC 14.2.0,
 CMake 4.4.5. The full 17-test CTest suite was rerun; its CLI integration test
 now includes the original 16 command-line cases and 12 interactive sessions.
 The original sanitizer, install and assembly checks below are historical checks
-of the unchanged library, not new platform validation for this console update.
+of the original core implementation, not new platform validation for later updates.
+
+Yard/mile update: 21 November 2026. The suite adds 48 runtime core checks,
+compile-time assertions for literals and type restrictions, 21 command-line cases
+and two interactive sessions. The total remains 17 CTest entries because these
+scenarios run inside the existing `core` and `cli_cases` entries.
+See [YARD_MILE_UPDATE.md](../YARD_MILE_UPDATE.md) for this update's validation record.
 
 ## Full suite
 
@@ -21,12 +27,12 @@ Expected delivery result: **17/17 CTest tests pass**.
 
 | Test area | Evidence |
 |---|---|
-| Core | 10,043 runtime checks, plus compile-time assertions |
+| Core | 10,091 runtime checks, plus compile-time assertions |
 | Numeric sampling | 2,000 deterministic inputs; five comparisons each against independent numerical formulas |
 | Type assertions | Deduced velocity/force/area, casts, concepts, conversions, comparisons, scalar rules, layout |
 | Compile rejection | 11 separate negative cases, each preceded by a valid compilation control |
-| CLI | 16 cases: conversions, incompatible dimensions, malformed/non-finite input, overflow, usage |
-| Interactive console | 12 sessions: repeated conversions, menu options, recovery from bad input, whitespace, overflow, EOF at every prompt and explicit interactive mode |
+| CLI | 37 cases: conversions (including yards/miles in both directions), incompatible dimensions, malformed/non-finite input, overflow, usage |
+| Interactive console | 14 sessions: repeated conversions, menu options, recovery from bad input, whitespace, overflow, EOF at every prompt, explicit interactive mode and yards/miles |
 | Applications | Demo, explanations, physics and custom-unit example |
 | Integration | Install library, `find_package` from a separate project, build and run consumer |
 | Direct build | Compiler-only script builds examples and runs core/negative tests |
@@ -80,10 +86,10 @@ absence of all defects.
 
 ## Platform status
 
-Linux GCC was executed here. Native macOS/Apple Clang and Windows/MSVC have not
-been executed here. The GitHub Actions matrix is supplied but has not run remotely.
-No badge or unexecuted platform is represented as passing. The team should run and
-record the actual compiler versions on their own computers before submission.
+This update was executed here with Linux GCC. Native macOS/Apple Clang and
+Windows/MSVC were not executed for this update. Run the supplied GitHub Actions
+matrix after pushing the changes; earlier CI runs do not validate these new files.
+The team should record actual compiler versions and results before submission.
 
 ## Boundaries of the tests
 

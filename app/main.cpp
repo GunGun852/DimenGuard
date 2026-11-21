@@ -14,7 +14,8 @@ using namespace dg::literals;
 
 namespace {
 using any_quantity = std::variant<dg::quantity<dg::metre>, dg::quantity<dg::centimetre>,
-    dg::quantity<dg::kilometre>, dg::quantity<dg::foot>, dg::quantity<dg::kilogram>,
+    dg::quantity<dg::kilometre>, dg::quantity<dg::foot>,
+    dg::quantity<dg::yard>, dg::quantity<dg::mile>, dg::quantity<dg::kilogram>,
     dg::quantity<dg::gram>, dg::quantity<dg::second>, dg::quantity<dg::millisecond>,
     dg::quantity<dg::minute>, dg::quantity<dg::hour>, dg::quantity<dg::square_metre>,
     dg::quantity<dg::cubic_metre>, dg::quantity<dg::metres_per_second>,
@@ -23,9 +24,10 @@ using any_quantity = std::variant<dg::quantity<dg::metre>, dg::quantity<dg::cent
 
 template<dg::Unit U> any_quantity make_quantity(double value) { return dg::quantity<U>{value}; }
 struct registry_entry { std::string_view symbol; any_quantity (*make)(double); };
-constexpr std::array<registry_entry, 17> registry{{
+constexpr std::array<registry_entry, 19> registry{{
     registry_entry{"m", make_quantity<dg::metre>}, {"cm", make_quantity<dg::centimetre>},
     {"km", make_quantity<dg::kilometre>}, {"ft", make_quantity<dg::foot>},
+    {"yd", make_quantity<dg::yard>}, {"mi", make_quantity<dg::mile>},
     {"kg", make_quantity<dg::kilogram>}, {"g", make_quantity<dg::gram>},
     {"s", make_quantity<dg::second>}, {"ms", make_quantity<dg::millisecond>},
     {"min", make_quantity<dg::minute>}, {"h", make_quantity<dg::hour>},
@@ -155,7 +157,7 @@ void interactive_menu() {
             std::string value_text, from_symbol, to_symbol;
             if (!read_answer("Enter value: ", value_text)) return;
             const double value = parse_value(value_text);
-            if (!read_answer("From unit (e.g. m, ft, kg, km/h): ", from_symbol)) return;
+            if (!read_answer("From unit (e.g. m, ft, yd, mi, kg, km/h): ", from_symbol)) return;
             if (!read_answer("To unit: ", to_symbol)) return;
             convert_and_print(value, from_symbol, to_symbol);
         } catch (const std::exception& error) {
@@ -175,6 +177,7 @@ void help() {
               << "  dimenguard convert VALUE FROM TO\n"
               << "  dimenguard --version\n"
               << "Examples: convert 1 ft m | convert 72 km/h m/s | convert 500 g kg\n"
+              << "Yards and miles: convert 1 yd m | convert 1 mi km | convert 1 mi yd\n"
               << "The CLI checks user-entered unit names at runtime; the C++ API checks types at compile time.\n";
 }
 }
