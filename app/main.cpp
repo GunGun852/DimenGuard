@@ -98,8 +98,8 @@ void explanation_demo() {
 }
 
 void demo() {
-    constexpr auto speed = 100.0_m/10.0_s;
-    constexpr auto acceleration = speed/5.0_s;
+    constexpr auto speed = 100.0_m / 10.0_s;
+    constexpr auto acceleration = speed / 5.0_s;
     constexpr auto force = 2.0_kg * acceleration;
     static_assert(std::same_as<typename decltype(force)::dimension_type, dg::force>);
     static_assert(force.value() == 4.0);
