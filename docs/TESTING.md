@@ -3,6 +3,12 @@
 Validation date: 16 November 2026. Environment: Linux x86-64, GCC 14.2.0,
 CMake 4.4.5. Record applies to the delivered source, not every compiler/version.
 
+Interactive-menu update: 20 November 2026, Linux x86-64, GCC 14.2.0,
+CMake 4.4.5. The full 17-test CTest suite was rerun; its CLI integration test
+now includes the original 16 command-line cases and 12 interactive sessions.
+The original sanitizer, install and assembly checks below are historical checks
+of the unchanged library, not new platform validation for this console update.
+
 ## Full suite
 
 ```sh
@@ -20,6 +26,7 @@ Expected delivery result: **17/17 CTest tests pass**.
 | Type assertions | Deduced velocity/force/area, casts, concepts, conversions, comparisons, scalar rules, layout |
 | Compile rejection | 11 separate negative cases, each preceded by a valid compilation control |
 | CLI | 16 cases: conversions, incompatible dimensions, malformed/non-finite input, overflow, usage |
+| Interactive console | 12 sessions: repeated conversions, menu options, recovery from bad input, whitespace, overflow, EOF at every prompt and explicit interactive mode |
 | Applications | Demo, explanations, physics and custom-unit example |
 | Integration | Install library, `find_package` from a separate project, build and run consumer |
 | Direct build | Compiler-only script builds examples and runs core/negative tests |
@@ -48,6 +55,11 @@ requires the valid control to build, then requires the invalid version to fail.
 A missing compiler/header cannot therefore produce a false success. Separate build
 directories allow cases to run in parallel. Logs are in
 `build/compile_cases/<case>/result-ON.log`.
+
+The harness uses `--clean-first` for each build after changing the negative-case
+macro. This prevents reuse of a valid-case object when file timestamps fall in
+the same clock tick. The stale-object failure was reproduced locally; a native
+macOS rerun is still needed to confirm the reported GitHub Actions failure there.
 
 The explanation demo is not substituted for these actual compiler tests. Compiler
 diagnostic wording varies; tests assert acceptance/rejection, not a fragile exact
