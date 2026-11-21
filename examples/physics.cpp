@@ -4,7 +4,6 @@
 namespace dg = dimenguard;
 using namespace dg::literals;
 
-// A reusable function cannot accidentally receive a mass as its duration.
 constexpr dg::quantity<dg::newton> required_force(
     dg::quantity<dg::kilogram> mass,
     dg::quantity<dg::metres_per_second> final_speed,
@@ -19,5 +18,4 @@ int main() {
               << "Mass: " << mass << "\nTarget speed: " << target
               << "\nDuration: " << 10.0_s << "\nForce: "
               << required_force(mass, target, 10.0_s) << '\n';
-    // Simplified teaching model: ignores resistance, changing mass and traction.
 }
