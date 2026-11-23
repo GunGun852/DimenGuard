@@ -1,5 +1,6 @@
 #include <dimenguard/dimenguard.hpp>
 #include "conversion_history.hpp"
+#include "startup_logo.hpp"
 #include "unit_names.hpp"
 
 #include <array>
@@ -147,6 +148,7 @@ bool read_answer(std::string_view prompt, std::string& answer) {
 
 void interactive_menu() {
     dg::cli::conversion_history history;
+    dg::cli::print_startup_logo(std::cout);
     std::cout << "\nWelcome to DimenGuard!\n"
               << "Enter each answer, then press Enter. Unit symbols are case-sensitive.\n";
     while (true) {
