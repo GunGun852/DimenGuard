@@ -47,6 +47,9 @@ static_assert(dg::unit_cast<dg::metre>(1.0_km).value() == 1000.0);
 static_assert(dg::unit_cast<dg::kilogram>(500.0_g).value() == 0.5);
 static_assert(dg::pow<0>(0.0_m).value() == 1.0);
 static_assert(dg::pow<-1>(2.0_s).value() == 0.5);
+constexpr auto inverse_square_of_huge = dg::pow<-2>(M{1e155});
+static_assert(inverse_square_of_huge.value() > 0.0);
+static_assert(inverse_square_of_huge.value() < std::numeric_limits<double>::min());
 static_assert(dg::analyze<dg::operation::add, dg::metre, dg::second>() == dg::verdict::dimension_mismatch);
 static_assert(dg::analyze<dg::operation::add, dg::metre, dg::foot>() == dg::verdict::explicit_conversion_required);
 static_assert(dg::analyze<dg::operation::multiply, dg::metre, dg::second>() == dg::verdict::valid);
@@ -96,6 +99,11 @@ int main() {
     CHECK((3_m * 4_m).value() == 12.0);
     CHECK(dg::pow<3>(2_m).value() == 8.0);
     CHECK(dg::pow<-2>(2_s).value() == 0.25);
+    const double inverse_square_of_huge_value = dg::pow<-2>(M{1e155}).value();
+    const double inverse_square_reference = std::pow(1e155, -2);
+    CHECK(inverse_square_of_huge_value > 0.0 &&
+          inverse_square_of_huge_value < std::numeric_limits<double>::min());
+    CHECK(std::abs(inverse_square_of_huge_value / inverse_square_reference - 1.0) < 1e-12);
     CHECK(dg::unit_cast<dg::one>(1_km / 1_m).value() == 1000.0);
     CHECK((1_m + dg::quantity<EquivalentMetre>{2.0}).value() == 3.0);
     auto mutable_length = 10_m;

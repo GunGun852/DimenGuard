@@ -6,23 +6,23 @@
 
 專案核心是一個 library，並附有可直接執行的示範程式。
 
-## 1. 先編譯，再啟動互動選單
+## 1. 啟動互動選單
 
 解壓縮 ZIP 檔案，使用 VS Code 開啟 `DimenGuard` 資料夾，然後開啟 Terminal。請先確認 Terminal 所在位置是包含 `README.md` 和 `CMakeLists.txt` 的專案根目錄。如果你已經使用 Codespaces，直接使用畫面下方的 Terminal 即可。
 
-第一次編譯，或修改 C++ 原始碼後，請執行：
+在 Codespaces、macOS 或 Linux 上，執行以下指令即可編譯並開啟互動選單：
+
+```sh
+bash run.sh
+```
+
+如要執行完整測試套件，請執行：
 
 ```sh
 bash build.sh
 ```
 
-編譯及測試成功後，啟動程式：
-
-```sh
-./build/dimenguard
-```
-
-如果電腦沒有安裝 CMake，build script 會改用直接編譯流程，並在完成後提示你執行 `./build-direct/dimenguard`。之後如只更改輸入數值，便無須重新編譯，直接重新啟動程式即可。
+`run.sh` 會使用 CMake 編譯；如果沒有安裝 CMake，則會改用 C++20 compiler 直接編譯。執行 `build.sh` 完成測試後，如使用 CMake，可用 `./build/dimenguard` 開啟選單；compiler-only 流程則使用 `./build-direct/dimenguard`。
 
 在選單中選擇 `1` 進行單位換算，並按照提示逐項輸入資料；每輸入一項，按 Enter 繼續：
 
@@ -39,6 +39,8 @@ To unit: m/s
 - `2`：列出所有支援的單位。單位符號區分大小寫，例如 `m` 和 `N` 代表不同單位。
 - `3`：顯示物理計算示範。
 - `4`：顯示維度推導說明。
+- `5`：查看本次執行期間最近成功的 10 次換算。
+- `6`：清除本次執行期間的換算紀錄。
 - `0`：離開程式。
 
 如果輸入無效選項或不相容的單位，例如嘗試將米換算成秒，程式會顯示錯誤提示，然後返回主選單。
@@ -127,8 +129,6 @@ ctest --test-dir build -C Release --output-on-failure --parallel 2
 ```
 
 使用 CMake 編譯時，程式位於 `build` 資料夾；使用 compiler-only script 時，程式則位於 `build-direct` 資料夾。
-
-VS Code 亦提供 configure、build、test 和 demo tasks，可直接在編輯器中執行相關工作。
 
 Windows 使用者可以在已設定 C++ 開發環境的 Developer PowerShell 中執行以上 CMake 指令。使用 Visual Studio generator 時，程式通常位於以下路徑：
 
