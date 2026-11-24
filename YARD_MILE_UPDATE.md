@@ -1,74 +1,74 @@
-# Yard / Mile 單位更新
+# Yard / Mile Unit Update
 
-日期：2026-11-21
+Date: 2026-11-21
 
-此更新包適用於已加入互動選單的 DimenGuard 版本
-（`DimenGuard_Interactive_Update.zip`）。它包含 8 個更新檔案及本說明，
-需要配合原有完整專案使用。
+This update package is intended for the version of DimenGuard that already includes the interactive menu (`DimenGuard_Interactive_Update.zip`). It contains eight updated files and this guide, and must be used together with the existing complete project.
 
-## 新增功能
+## New Features
 
-| 單位 | C++ 型別 | C++ literal | 選單輸入符號 | 定義 |
+| Unit | C++ type | C++ literal | Menu input symbol | Definition |
 |---|---|---|---|---|
-| yard（碼） | `dimenguard::yard` | `1_yd`、`1.5_yd` | `yd` | 1 yd = 0.9144 m = 3 ft |
-| mile（英里） | `dimenguard::mile` | `1_mi`、`0.5_mi` | `mi` | 1 mi = 1609.344 m = 1760 yd |
+| Yard | `dimenguard::yard` | `1_yd`, `1.5_yd` | `yd` | 1 yd = 0.9144 m = 3 ft |
+| Mile | `dimenguard::mile` | `1_mi`, `0.5_mi` | `mi` | 1 mi = 1609.344 m = 1760 yd |
 
-使用 international yard / mile 定義，比例以 `std::ratio` 儲存。
-定義來源：[NIST conversion factors](https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors)。
-實際數值仍使用 `double`，浮點運算可能有捨入誤差。
+The units follow the international yard and mile definitions, with conversion ratios stored using `std::ratio`.
 
-兩種單位都可以同 `m`、`cm`、`km`、`ft` 互相換算；選單「列出單位」亦會顯示它們。
-輸入時使用小寫 `yd`、`mi`。
+Definition source: [NIST conversion factors](https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors).
 
-## 將更新加入 GitHub
+Actual numerical values still use `double`, so floating-point calculations may involve rounding errors.
 
-1. 先確認準備更新的分支已有互動選單版本，並讓隊友同步該分支。
-2. 建立工作分支，例如 `feature/yard-mile`。
-3. 解壓縮 ZIP，在 repository 根目錄選擇 **Add file → Upload files**，
-   上傳解壓後的檔案及資料夾內容，保留以下相對路徑。
-   GitHub 上傳的是原始檔案，而 ZIP 是用來傳送更新包。
-4. 檢查 diff：若隊友已修改相同檔案，將雙方修改合併後再提交。
-5. 建議 commit message：`Add yard and mile unit support`。
-6. 用這個 branch 建立 Pull Request，待測試及 review 完成後合併。
+Both units support conversion to and from `m`, `cm`, `km` and `ft`. They also appear in the menu’s unit list.
 
-| 路徑 | 更新內容 |
+Use lowercase `yd` and `mi` when entering unit symbols.
+
+## Adding the Update to GitHub
+
+1. Confirm that the target branch already contains the interactive menu version, and ask your teammates to synchronise their copies with that branch.
+2. Create a working branch, such as `feature/yard-mile`.
+3. Extract the ZIP file. At the repository root, select **Add file → Upload files**, then upload the extracted files and folder contents while preserving the relative paths listed below. Upload the source files to GitHub; the ZIP is used to distribute the update package.
+4. Review the diff. If a teammate has modified the same files, combine both sets of changes before committing.
+5. Suggested commit message: `Add yard and mile unit support`.
+6. Create a Pull Request from this branch and merge it after testing and review are complete.
+
+| Path | Changes |
 |---|---|
-| `include/dimenguard/si.hpp` | 單位型別及 `_yd`、`_mi` literals |
-| `include/dimenguard/format.hpp` | `yd`、`mi` 顯示符號 |
-| `app/main.cpp` | 選單及 CLI 換算支援 |
-| `tests/test_core.cpp` | 數值換算及編譯期型別檢查 |
-| `cmake/CliTests.cmake` | CLI 及互動選單測試 |
-| `docs/API.md` | 單位及 C++ 使用說明 |
-| `docs/TESTING.md` | 更新測試紀錄 |
-| `README.md` | 使用例子及測試數量 |
-| `YARD_MILE_UPDATE.md` | 本更新說明 |
+| `include/dimenguard/si.hpp` | Unit types and `_yd` / `_mi` literals |
+| `include/dimenguard/format.hpp` | Display symbols for `yd` and `mi` |
+| `app/main.cpp` | Conversion support in the interactive menu and CLI |
+| `tests/test_core.cpp` | Numerical conversion tests and compile-time type checks |
+| `cmake/CliTests.cmake` | CLI and interactive menu tests |
+| `docs/API.md` | Unit documentation and C++ usage instructions |
+| `docs/TESTING.md` | Updated testing records |
+| `README.md` | Usage examples and test counts |
+| `YARD_MILE_UPDATE.md` | This update guide |
 
-若在本機套用，將每個檔案放到專案的同名路徑，保留其餘專案檔案。
-本更新包不會自動修改 GitHub repository。
+When applying the update locally, place each file at its corresponding project path and retain the other project files.
 
-## 開啟互動選單
+This update package does not automatically modify the GitHub repository.
 
-在套用更新的分支及專案根目錄，重新編譯：
+## Opening the Interactive Menu
+
+Switch to the branch containing the update, open the project’s root directory, and rebuild:
 
 ```sh
 bash build.sh
 ```
 
-編譯成功後，按照畫面顯示的路徑啟動。使用 CMake 時是：
+After compilation succeeds, launch the program using the path shown in the terminal. When using CMake, run:
 
 ```sh
 ./build/dimenguard
 ```
 
-若電腦沒有 CMake，腳本會使用直接編譯流程；啟動路徑是：
+If CMake is unavailable, the script uses the direct compilation workflow. In that case, run:
 
 ```sh
 ./build-direct/dimenguard
 ```
 
-Codespaces 使用 Linux，即使你透過 Mac 瀏覽器開啟，亦可用以上指令。
+Codespaces runs Linux, even when accessed through a browser on a Mac, so the commands above also apply.
 
-選擇 `1`（換算），然後逐行輸入：
+Select `1` to convert units, then enter the following values one line at a time:
 
 ```text
 Enter value: 1
@@ -77,22 +77,22 @@ To unit: m
 1 mi = 1609.344 m
 ```
 
-| 數值 | 原單位 | 目標單位 | 預期結果 |
+| Value | Source unit | Target unit | Expected result |
 |---|---|---|---|
 | 1 | yd | ft | 3 ft |
 | 1 | yd | m | 0.9144 m |
 | 1 | mi | km | 1.609344 km |
 | 1 | mi | yd | 1760 yd |
 | 1760 | yd | mi | 1 mi |
-| 1 | mi | kg | 顯示 incompatible dimensions，並返回選單 |
+| 1 | mi | kg | Displays an “incompatible dimensions” error and returns to the menu |
 
-亦可直接執行：
+You can also run a conversion directly:
 
 ```sh
 ./build/dimenguard convert 1 mi yd
 ```
 
-## C++ 使用例子
+## C++ Usage Example
 
 ```cpp
 #include <dimenguard/dimenguard.hpp>
@@ -109,21 +109,24 @@ int main() {
 }
 ```
 
-同一單位可以直接相加。不同長度單位需要明確使用 `unit_cast` 後相加。
-`1_mi + 1_s` 或將 mile 轉成 kilogram，會被 C++ 型別限制拒絕。
-互動選單的單位由使用者執行時輸入，所以選單的錯誤輸入會在執行時提示。
+Quantities with the same unit can be added directly. Different length units require explicit conversion using `unit_cast` before addition.
 
-## 本次測試結果
+Expressions such as `1_mi + 1_s`, or attempts to convert miles into kilograms, are rejected by the C++ type constraints.
 
-實測環境：Linux x86-64、GCC 14.2.0、CMake 4.4.5。
+In the interactive menu, users enter unit symbols at runtime, so invalid menu input produces a runtime error message.
 
-- 17/17 CTest 測試通過。
-- 10,091 個 runtime core checks 通過，另有編譯期 assertions。
-- 37 個 CLI cases 及 14 個互動選單 sessions 通過。
-- 原有 11 個「錯誤程式必須編譯失敗」測試全部通過。
-- 新增測試涵蓋雙向換算、零、負數、小數、溢位、不相容單位、格式及型別限制。
+## Test Results for This Update
 
-此次沒有在原生 macOS 或 Windows 執行；提交 PR 後請檢查 GitHub Actions 的結果。
-CTest 總數仍是 17，因為新增案例放在原有 `core` 及 `cli_cases` 測試內。
+Test environment: Linux x86-64, GCC 14.2.0 and CMake 4.4.5.
 
-此更新由 AI 協助製作。負責隊友可以在 PR 記錄自己實際 review、修改及測試的內容。
+- All 17 CTest tests passed.
+- All 10,091 runtime core checks passed, alongside compile-time assertions.
+- All 37 CLI cases and 14 interactive menu sessions passed.
+- All 11 existing tests requiring invalid programs to fail compilation passed.
+- New tests cover conversions in both directions, zero, negative values, decimals, overflow, incompatible units, formatting and type constraints.
+
+This update was not tested on native macOS or Windows. Check the GitHub Actions results after submitting the Pull Request.
+
+The total number of CTest entries remains 17 because the additional cases are included within the existing `core` and `cli_cases` tests.
+
+This update was developed with AI assistance. The responsible team member can document the review, modifications and testing they actually performed in the Pull Request.
