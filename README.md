@@ -208,13 +208,12 @@ before writing the coursework innovation justification.
 
 ## Documentation
 
-- [API and limitations](docs/API.md)
+- [API reference](docs/API.md)
 - [Architecture and type derivation](docs/ARCHITECTURE.md)
 - [Testing and actual results](docs/TESTING.md)
 - [Performance evidence](docs/PERFORMANCE.md)
-- [One-minute demonstration](docs/DEMO_SCRIPT.md)
-- [Suggested five-person work plan](docs/TEAMWORK.md)
-- [Submission checklist](docs/SUBMISSION.md)
-- [AI development record](docs/AI_USE.md)
+- [Team Contributions](docs/TEAMWORK.md)
+- [Project Submission](docs/SUBMISSION.md)
+- [AI-assisted development record](docs/AI_USE.md)
 
 License: [MIT](LICENSE).
