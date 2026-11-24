@@ -99,9 +99,10 @@ operator<=>(quantity<U> lhs, quantity<V> rhs) noexcept { return lhs.value() <=> 
 
 template<int N, Unit U> requires (N >= -8 && N <= 8)
 [[nodiscard]] constexpr quantity<unit_power<U, N>> pow(quantity<U> q) noexcept {
+    double base = q.value();
+    if constexpr (N < 0) base = 1.0 / base;
     double result = 1.0;
-    for (int i = 0; i < (N < 0 ? -N : N); ++i) result *= q.value();
-    if constexpr (N < 0) result = 1.0 / result;
+    for (int i = 0; i < (N < 0 ? -N : N); ++i) result *= base;
     return quantity<unit_power<U, N>>{result};
 }
 

@@ -4,7 +4,9 @@
 #include "unit_names.hpp"
 
 #include <array>
+#include <cerrno>
 #include <cmath>
+#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -46,16 +48,16 @@ any_quantity lookup(std::string_view symbol, double value) {
 }
 
 double parse_value(const std::string& input) {
-    std::size_t consumed = 0;
-    double value = 0.0;
-    try {
-        value = std::stod(input, &consumed);
-    } catch (const std::invalid_argument&) {
+    const char* const start = input.c_str();
+    char* end = nullptr;
+    errno = 0;
+    const double value = std::strtod(start, &end);
+    if (end == start || end != start + input.size())
         throw std::invalid_argument("VALUE must be a finite number with no trailing characters");
-    } catch (const std::out_of_range&) {
+    if (errno == ERANGE &&
+        (value == 0.0 || !std::isfinite(value) || std::fpclassify(value) != FP_SUBNORMAL))
         throw std::out_of_range("VALUE is outside the supported number range");
-    }
-    if (consumed != input.size() || !std::isfinite(value))
+    if (!std::isfinite(value))
         throw std::invalid_argument("VALUE must be a finite number with no trailing characters");
     return value;
 }
