@@ -1,9 +1,8 @@
-# 單位全寫顯示更新
+# Full Unit Name Display Update
 
-更新日期：2026-11-21
+Update date: 2026-11-21
 
-選單 `2. List supported units` 及 `dimenguard units` 現在會以
-`s (second)` 的形式顯示單位。
+The `2. List supported units` menu option and the `dimenguard units` command now display units in the format `s (second)`.
 
 ```text
 m (metre)
@@ -25,29 +24,29 @@ N (newton)
 1 (dimensionless)
 ```
 
-如果你的版本已支援 yard 和 mile，列表亦會顯示 `yd (yard)`、`mi (mile)`。
-列表仍根據專案實際支援的單位產生；這個更新只加入顯示名稱。
-換算時繼續輸入 `s`、`m` 等符號，例如 `1000 ms = 1 s`。
+If your version already supports yards and miles, the list will also include `yd (yard)` and `mi (mile)`.
 
-## 更新包內容
+The list is still generated from the units actually supported by the project. This update only adds display names.
 
-| 檔案 | 用途 |
+Continue entering symbols such as `s` and `m` when performing conversions, for example: `1000 ms = 1 s`.
+
+## Update Package Contents
+
+| File | Purpose |
 |---|---|
-| `app/unit_names.hpp` | C++ 單位名稱及顯示函式 |
-| `unit_names.patch` | 修改現有 `app/main.cpp` 的兩處位置 |
-| `UNIT_NAMES_UPDATE.md` | 本說明 |
+| `app/unit_names.hpp` | C++ unit names and display functions |
+| `unit_names.patch` | Modifies two locations in the existing `app/main.cpp` |
+| `UNIT_NAMES_UPDATE.md` | This update guide |
 
-此包適用於已有互動選單的 DimenGuard，已分別驗證 17 種單位版本及
-加入 yard/mile 後的 19 種單位版本。使用局部 patch 保留其餘程式修改。
+This package is intended for DimenGuard versions that already include the interactive menu. It has been validated with both the 17-unit version and the 19-unit version containing yards and miles.
 
-## 方法 A：在 Codespaces 套用
+A targeted patch is used to preserve other changes to the program.
 
-1. 先同步你們的最新 `main`，再建立工作分支，例如 `feature/unit-full-names`。
-   若有未提交的改動，先保存及處理好該改動。
-2. 解壓縮更新包，將三個檔案放入專案，按上表保留路徑。
-   `unit_names.hpp` 放在原有 `app` 資料夾，另外兩個檔案放在專案根目錄
-   （與 `CMakeLists.txt` 同一層）。
-3. 在專案根目錄的 Terminal **逐行**執行以下指令，確認每一步成功再繼續。
+## Method A: Apply the Update in Codespaces
+
+1. Synchronise your local copy with the team’s latest `main` branch, then create a working branch, such as `feature/unit-full-names`. If you have uncommitted changes, save and resolve them first.
+2. Extract the update package and place the three files in the project, preserving the paths shown above. Put `unit_names.hpp` inside the existing `app` folder. Put the other two files in the project root, at the same level as `CMakeLists.txt`.
+3. In the terminal at the project root, run the following commands **one line at a time**, confirming that each step succeeds before continuing.
 
 ```sh
 git apply --check unit_names.patch
@@ -55,45 +54,44 @@ git apply unit_names.patch
 bash build.sh
 ```
 
-第一行成功通常不會顯示文字。第二行才會實際更新 `app/main.cpp`。
-如果出現 `patch failed`，代表對應程式已有其他修改，或已套用過此更新；
-請使用下面方法 B 核對兩個位置。
+The first command usually produces no output when successful. The second command actually updates `app/main.cpp`.
 
-4. 編譯成功後按畫面提示啟動；使用 CMake 的版本是：
+If you see `patch failed`, the relevant code may have been modified, or this update may already have been applied. Use Method B below to check the two locations.
+
+4. After compilation succeeds, launch the program using the path shown in the terminal. For the CMake version, run:
 
 ```sh
 ./build/dimenguard
 ```
 
-若腳本提示直接編譯版本，則使用：
+If the script indicates that it used direct compilation, run:
 
 ```sh
 ./build-direct/dimenguard
 ```
 
-5. 選擇 `2`，確認出現 `s (second)`。接着選擇 `1`，輸入
-   `1000`、`ms`、`s`，確認得到 `1000 ms = 1 s`。
-6. Review 並 commit 功能改動，建議訊息：
-   `Show full unit names in the supported units list`，然後建立 PR。
+5. Select `2` and confirm that `s (second)` appears. Then select `1` and enter `1000`, `ms` and `s`. Confirm that the result is `1000 ms = 1 s`.
+6. Review and commit the changes. Suggested commit message: `Show full unit names in the supported units list`. Then create a Pull Request.
 
-功能所需檔案是 `app/main.cpp` 和 `app/unit_names.hpp`；
-請讓兩個檔案一同進入 PR。本說明及 patch 可一併保留作更新紀錄。
+The files required for this feature are `app/main.cpp` and `app/unit_names.hpp`. Include both files in the same Pull Request.
 
-## 方法 B：直接在 GitHub 網頁編輯
+You may also retain this guide and the patch as records of the update.
 
-如果你只使用 GitHub 網頁，可以完成以下兩項修改，毋須執行 patch。
+## Method B: Edit Directly on GitHub
 
-1. 在工作分支新增 `app/unit_names.hpp`，內容使用更新包內的同名檔案。
-2. 編輯該分支的 `app/main.cpp`，只改以下兩個位置。
+If you only use the GitHub website, make the following two changes without running the patch.
 
-在檔案頂部原有的 include 下加入一行：
+1. Add `app/unit_names.hpp` to your working branch, using the contents of the file with the same name in the update package.
+2. Edit `app/main.cpp` on that branch, changing only the two locations below.
+
+Add the new include directly below the existing DimenGuard include at the top of the file:
 
 ```cpp
 #include <dimenguard/dimenguard.hpp>
 #include "unit_names.hpp"
 ```
 
-將原有的 `list_units()` 函式改為：
+Replace the existing `list_units()` function with:
 
 ```cpp
 void list_units() {
@@ -104,16 +102,17 @@ void list_units() {
 }
 ```
 
-保留其餘程式內容，再提交 PR。之後在 Codespaces 同步該分支、重新編譯及測試。
+Keep the rest of the program unchanged and submit a Pull Request. Afterwards, synchronise that branch in Codespaces, rebuild the project and test it.
 
-## 驗證紀錄
+## Validation Record
 
-- Linux x86-64，GCC 14.2.0，CMake 4.4.5。
-- 19 種單位版本：現有 17/17 CTest 測試通過。
-- 17 種單位互動版本：套用 patch 後，以 C++20 編譯成功。
-- 兩個版本均實際檢查 `units` 輸出，以及「選單列出單位 → 換算 → 退出」。
-- patch 已在兩個版本的原始 `app/main.cpp` 上成功套用。
-- 原生 macOS 和 Windows 未在這次驗證中執行；請檢查你們 PR 的 CI 結果。
+- Environment: Linux x86-64, GCC 14.2.0 and CMake 4.4.5.
+- **19-unit version:** All 17 existing CTest tests passed.
+- **17-unit interactive version:** Successfully compiled with C++20 after applying the patch.
+- For both versions, the `units` output and the interactive sequence “list units → convert → exit” were checked.
+- The patch was successfully applied to the original `app/main.cpp` in both versions.
+- Native macOS and Windows were not tested during this validation. Check the CI results for your Pull Request.
 
-現有 17 項 CTest 測試數量不變。本次顯示更新另以實際 console 輸出核對。
-這個更新包不會自動上傳或合併 GitHub 上的改動。
+The number of existing CTest entries remains 17. This display update was additionally verified by checking the actual console output.
+
+This update package does not automatically upload or merge changes on GitHub.
