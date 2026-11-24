@@ -1,40 +1,39 @@
-# wave2349：本次執行的最近轉換記錄
+# Session Conversion History Update
 
-這是可直接上傳的 C++ 原始碼更新包，基於已有互動選單、yard/mile、
-單位全寫及 `run.sh` 的版本。安裝一次後，每次開啟不用套用 patch。
+This package contains C++ source updates ready to upload. It is based on the version that already includes the interactive menu, yard/mile units, full unit names and `run.sh`.
 
-## 新功能
+Apply the update once. You do not need to apply a patch each time you launch the program.
 
-- 選項 **5**：顯示本次執行最近 10 次成功轉換，由舊至新排列。
-- 選項 **6**：清除全部記錄，顯示 `Conversion history cleared.`。
-- 第 11 次成功轉換會移除最舊一筆，畫面編號維持 1–10。
-- 相同的成功轉換會各自記錄；輸入錯誤、未知單位、量綱不相容及數值溢位不會記錄。
-- 沒有記錄時顯示 `No successful conversions in this session.`。
-- 記錄只存於記憶體，退出／重新開啟程式會清空，不會產生記錄檔。
-- 選項 2 繼續顯示 `s (second)` 等 19 個單位全寫。
+## New Features
 
-## wave2349 安裝及提交一次
+- Option **5** displays the last 10 successful conversions from the current session, ordered from oldest to newest.
+- Option **6** clears all records and displays `Conversion history cleared.`
+- The 11th successful conversion removes the oldest record. Displayed entries remain numbered 1–10.
+- Repeated successful conversions are recorded separately. Invalid input, unknown units, incompatible dimensions and numerical overflow are not recorded.
+- When the history is empty, the program displays `No successful conversions in this session.`
+- Records are stored only in memory. Exiting or restarting the program clears them, and no history file is created.
+- Option **2** continues to display all 19 units with their full names, such as `s (second)`.
 
-1. 從團隊最新的 `main` 建立自己的分支，例如 `feature/conversion-history`。
-2. 解壓縮 ZIP，把包內檔案放到專案根目錄，保留 `app/`、`cmake/`、`docs/` 路徑。
-   若用 GitHub 網頁 Upload files，拖入解壓縮後的內容，確認不是多包一層資料夾。
-3. 檢查修改內容，完成以下測試，再以自己的 GitHub 帳戶 commit 及開 PR。
-   建議 commit message：`Add session conversion history with clear option`。
-4. PR 合併後，其他組員更新到包含這個 commit 的版本，再啟動。
+## One-Time Installation and Submission
 
-本包的 `app/main.cpp` 是完整檔案。若隊友已在同一檔案加入其他新功能，
-請在 PR 的 Files changed 檢查及合併那些修改，避免用較舊檔案覆蓋新功能。
-實際測試、理解及修正後再提交，分工紀錄如實描述完成的工作。
+1. Create a working branch from the latest `main`, such as `feature/conversion-history`.
+2. Extract the ZIP and place its contents in the project root, preserving the `app/`, `cmake/` and `docs/` paths. If using GitHub’s **Upload files** page, drag in the extracted contents and ensure that no extra enclosing folder is added.
+3. Review the changes, complete the tests below, then commit and open a Pull Request. Suggested commit message: `Add session conversion history with clear option`.
+4. After the Pull Request is merged, update your working copy to a version containing this commit before launching the program.
 
-## 每次啟動
+The package includes a complete replacement for `app/main.cpp`. If other features have since been added to that file, review and combine the changes in the Pull Request’s **Files changed** tab to avoid overwriting newer features with an older file.
 
-在專案根目錄的 Terminal 輸入：
+Understand, test and correct the changes before submitting them.
+
+## Launching the Program
+
+From the terminal in the project root, run:
 
 ```sh
 bash run.sh
 ```
 
-選單會直接出現：
+The interactive menu will appear:
 
 ```text
 1. Convert units
@@ -46,25 +45,27 @@ bash run.sh
 0. Exit
 ```
 
-`run.sh` 會編譯目前分支的程式碼並啟動。不需要 `git apply`，也不用另打編譯指令。
-更新前若程式仍開著，先選 `0` 退出，再啟動新版本。
-直接開舊的 `build/dimenguard` 可能仍是先前編譯的版本，請統一使用 `bash run.sh`。
+`run.sh` compiles the code from the current branch and launches the program. There is no need to run `git apply` or enter a separate compilation command.
 
-## 手動驗收
+If the program is still running when you update it, select `0` to exit before launching the new version.
 
-| 操作 | 應有結果 |
+Running an existing `build/dimenguard` executable directly may launch a previously compiled version. Use `bash run.sh` consistently to build and launch the current source.
+
+## Manual Acceptance Tests
+
+| Action | Expected result |
 |---|---|
-| 剛啟動就選 5 | 顯示 0/10，沒有成功記錄 |
-| 選 1，依次輸入 `1`、`mi`、`m` | 顯示 `1 mi = 1609.344 m` |
-| 再選 1，依次輸入 `72`、`km/h`、`m/s` | 顯示 `72 km/h = 20 m/s` |
-| 選 5 | 顯示上述兩筆成功記錄，按操作先後排列 |
-| 嘗試 `1 m` 轉成 `s`，再選 5 | 顯示錯誤，仍只有原來兩筆記錄 |
-| 選 6，再選 5 | 顯示清除成功，記錄為空 |
-| 完成 11 次成功轉換後選 5 | 只有最後 10 次，第一筆已移除 |
-| 選 0，重新 `bash run.sh`，選 5 | 新一次執行的記錄為空 |
-| 選 2 | 仍顯示 `s (second)`、`yd (yard)`、`mi (mile)` 等全寫 |
+| Select `5` immediately after launching | Displays 0/10 with no successful conversions |
+| Select `1`, then enter `1`, `mi` and `m` | Displays `1 mi = 1609.344 m` |
+| Select `1` again, then enter `72`, `km/h` and `m/s` | Displays `72 km/h = 20 m/s` |
+| Select `5` | Displays the two successful conversions in chronological order |
+| Attempt to convert `1 m` to `s`, then select `5` | Displays an error; the history still contains only the original two records |
+| Select `6`, then select `5` | Confirms that the history was cleared and shows an empty history |
+| Complete 11 successful conversions, then select `5` | Displays only the last 10 conversions; the first has been removed |
+| Select `0`, run `bash run.sh` again, then select `5` | The new session starts with an empty history |
+| Select `2` | Still displays full names, including `s (second)`, `yd (yard)` and `mi (mile)` |
 
-顯示例子：
+Example output:
 
 ```text
 Recent successful conversions (2/10, oldest first):
@@ -72,36 +73,35 @@ Recent successful conversions (2/10, oldest first):
 2. 72 km/h = 20 m/s
 ```
 
-## 自動測試及分工說明
+## Automated Testing and Implementation
 
-執行完整測試：
+Run the full test suite:
 
 ```sh
 bash build.sh
 ```
 
-CMake 流程會執行全部測試；若機器沒有 CMake，請在 Codespaces 或 CI
-使用 CMake 跑完整測試，因為 compiler-only fallback 不會跑互動記錄測試。
+The CMake workflow runs all tests. If CMake is unavailable on your machine, run the full suite using CMake in Codespaces or CI, because the compiler-only fallback does not run the interactive history tests.
 
-本更新已在 Linux、GCC 14.2.0、CMake 4.4.5 驗證：17/17 CTest entries 通過，
-內含 37 個 CLI 情境、22 個互動情境，其中 8 個專門驗證記錄功能。
-本次沒有執行原生 macOS／Windows 或遠端 GitHub Actions；提交後檢查 PR 的 CI 結果。
+This update was validated on Linux with GCC 14.2.0 and CMake 4.4.5. All **17/17 CTest entries passed**, including 37 CLI scenarios and 22 interactive scenarios. Eight of the interactive scenarios specifically test the history feature.
 
-核心實作：`app/conversion_history.hpp` 用 `std::deque<std::string>` 保存已成功輸出的結果。
-`app/main.cpp` 只在轉換與檢查完成後加入記錄。它屬於互動工具的執行期功能，
-不影響 `include/dimenguard/` 的編譯期量綱檢查。
+Native macOS, Windows and remote GitHub Actions were not run during this validation. Check the Pull Request’s CI results after submission.
 
-## 包內檔案
+The core implementation is in `app/conversion_history.hpp`, which uses `std::deque<std::string>` to store successfully displayed conversion results.
 
-| 檔案 | 用途 |
+`app/main.cpp` adds a record only after the conversion and validation checks have completed successfully. This is a runtime feature of the interactive application and does not affect the compile-time dimensional checks in `include/dimenguard/`.
+
+## Package Contents
+
+| File | Purpose |
 |---|---|
-| `app/main.cpp` | 接上記錄功能、選單 5／6 及說明 |
-| `app/conversion_history.hpp` | 新增最多 10 筆的記錄容器、顯示及清除 |
-| `app/unit_names.hpp` | 附上既有全寫功能，確保相依檔案齊全 |
-| `cmake/CliTests.cmake` | 更新選單檢查並載入記錄測試 |
-| `cmake/HistoryTests.cmake` | 新增 8 個互動記錄測試情境 |
-| `run.sh`、`start.command` | 附上既有簡易啟動器 |
-| `README.md`、`docs/TESTING.md` | 更新使用方法及測試紀錄 |
-| `HISTORY_UPDATE.md` | 本安裝、驗收及分工指引 |
+| `app/main.cpp` | Integrates conversion history, menu options 5 and 6, and help text |
+| `app/conversion_history.hpp` | Adds a history container with a maximum of 10 entries, plus display and clear functions |
+| `app/unit_names.hpp` | Includes the existing full-name display feature to ensure the required dependencies are present |
+| `cmake/CliTests.cmake` | Updates menu checks and loads the history tests |
+| `cmake/HistoryTests.cmake` | Adds eight interactive history test scenarios |
+| `run.sh`, `start.command` | Includes the existing simplified launchers |
+| `README.md`, `docs/TESTING.md` | Updates usage instructions and testing records |
+| `HISTORY_UPDATE.md` | This installation, acceptance testing and implementation guide |
 
-這是更新包，需要配合原本完整 DimenGuard 專案，不是獨立完整專案。
+This is an update package. It must be used with the existing complete DimenGuard project and is not a standalone project.
