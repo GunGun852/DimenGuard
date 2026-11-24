@@ -60,14 +60,3 @@ have not changed in this update.
 
 Suggested commit message after reviewing and testing:
 `Add interactive unit conversion menu`.
-
-## 繁體中文快速開始
-
-將 ZIP 入面嘅檔案按原有路徑放返入現有專案；例如 `app/main.cpp`
-對應現有嘅 `app/main.cpp`。如果隊友改過同一份檔案，先比較再合併。
-呢份係更新包，需要配合原本專案使用。
-
-喺 Codespaces 下方 Terminal 執行 `bash build.sh`，成功後執行
-`./build/dimenguard`。揀 `1`，逐項輸入數值、原本單位、目標單位，
-每次按 Enter。可以不斷轉換，揀 `0` 離開。下次再開只需執行程式，
-改輸入值唔使重新編譯；修改 C++ 原始碼先要重新 build。
